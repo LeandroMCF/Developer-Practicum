@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Application;
 using Application.Enums;
+using Application.Models;
+using Application.Services;
 using NUnit.Framework;
 
 namespace ApplicationTests
@@ -15,6 +17,15 @@ namespace ApplicationTests
         public void Setup()
         {
             _sut = new DishManager();
+        }
+
+        [Test]
+        public void ReturnsBothMenu()
+        {
+            var menu1 = _sut.SeeMorninMenu();
+            var menu2 = _sut.SeeEveningMenu();
+            Assert.AreEqual("Mornin: | 1 - Egg | 2 -  toast | 3 - coffee |", menu1);
+            Assert.AreEqual("Evening: | 1 - steak | 2 - potato  | 3 - wine  | 4 - cake |", menu2);
         }
 
         [Test]

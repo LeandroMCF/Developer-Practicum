@@ -1,16 +1,22 @@
 ﻿using Application.Enums;
+using Application.Models;
+using GrosvenorDeveloper.WebApp.Context;
 using System;
 using System.Collections.Generic;
 
-namespace Application
+namespace Application.Services
 {
     public class Server : IServer
     {
         private readonly IDishManager _dishManager;
+        private readonly AppDbContext _context;
 
-        public Server(IDishManager dishManager)
+        public Server(
+            IDishManager dishManager, 
+            AppDbContext context)
         {
             _dishManager = dishManager;
+            _context = context;
         }
 
         public string TakeOrder(string unparsedOrder)
@@ -37,7 +43,6 @@ namespace Application
 
             var orderItems = unparsedOrder.Split(',');
 
-            // Verifica o primeiro item como o período
             string periodInput = orderItems[0].Trim().ToLower();
 
             if (!Enum.TryParse(periodInput, true, out Period period))
@@ -47,7 +52,6 @@ namespace Application
 
             returnValue.Period = period;
 
-            // Processa os itens restantes como números
             for (int i = 1; i < orderItems.Length; i++)
             {
                 if (int.TryParse(orderItems[i].Trim(), out int parsedOrder))
@@ -56,7 +60,7 @@ namespace Application
                 }
                 else
                 {
-                    throw new ApplicationException("Order needs to be a comma-separated list of numbers."); // Mensagem atualizada
+                    throw new ApplicationException("Order needs to be a comma-separated list of numbers."); 
                 }
             }
 

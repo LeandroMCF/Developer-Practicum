@@ -1,7 +1,7 @@
 ﻿using Application.Enums;
 using System.Collections.Generic;
 
-namespace Application
+namespace Application.Models
 {
     public class Order
     {
@@ -9,6 +9,8 @@ namespace Application
         {
             Dishes = new List<int>();
         }
+
+        public int Id { get; set; }
         public List<int> Dishes { get; set; }
         public Period Period { get; set; }
     }

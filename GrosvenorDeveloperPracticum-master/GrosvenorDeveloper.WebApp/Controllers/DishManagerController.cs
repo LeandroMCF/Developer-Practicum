@@ -24,7 +24,6 @@ namespace GrosvenorDeveloper.WebApp.Controllers
             return Ok(menu);
         }
 
-        // GET: api/dishmanager/eveningmenu
         [HttpGet("mock/eveningmenu")]
         public ActionResult<string> GetEveningMenuMock()
         {

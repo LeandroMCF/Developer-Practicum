@@ -18,7 +18,7 @@ namespace ApplicationTests
         public void Setup()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDb")
+                .UseInMemoryDatabase(databaseName: "InMemoryDb")
                 .Options;
 
             _context = new AppDbContext(options);

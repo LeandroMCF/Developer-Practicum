@@ -20,7 +20,7 @@ namespace ApplicationTests
         public void Setup()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDb")
+                .UseInMemoryDatabase(databaseName: "InMemoryDb")
                 .Options;
 
             _context = new AppDbContext(options);
@@ -77,8 +77,8 @@ namespace ApplicationTests
         {
             var order = new Order
             {
-                Period = Period.evening, // Adicionado o período
-                Dishes = new List<int> { 1 } // steak
+                Period = Period.evening,
+                Dishes = new List<int> { 1 }
             };
 
             var actual = _sut.GetDishes(order);
@@ -87,14 +87,13 @@ namespace ApplicationTests
             Assert.AreEqual(1, actual.First().Count);
         }
 
-        // Adicionando novos testes para os pratos da manhã
         [Test]
         public void ListWith1EggReturnsOneEgg()
         {
             var order = new Order
             {
-                Period = Period.morning, // Período da manhã
-                Dishes = new List<int> { 1 } // egg
+                Period = Period.morning,
+                Dishes = new List<int> { 1 }
             };
 
             var actual = _sut.GetDishes(order);
@@ -109,7 +108,7 @@ namespace ApplicationTests
             var order = new Order
             {
                 Period = Period.morning,
-                Dishes = new List<int> { 3 } // coffee
+                Dishes = new List<int> { 3 }
             };
 
             var actual = _sut.GetDishes(order);
@@ -117,7 +116,5 @@ namespace ApplicationTests
             Assert.AreEqual("coffee", actual.First().DishName);
             Assert.AreEqual(1, actual.First().Count);
         }
-
-        // Testes adicionais podem ser feitos para outras combinações e pratos
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using Application.Services;
+using GrosvenorDeveloper.WebApp.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace GrosvenorInHousePracticum
 {
@@ -7,8 +9,14 @@ namespace GrosvenorInHousePracticum
     {
         static void Main()
         {
-            var server = new Server(new DishManager());
-            var dish = new DishManager();
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase(databaseName: "InMemoryDb")
+                .Options;
+
+            var context = new AppDbContext(options);
+
+            var dishManager = new DishManager(context);
+            var server = new Server(dishManager, context);
 
             Console.WriteLine("Welcome! Please enter your order in the following format:");
             Console.WriteLine("Format: period, dishType1, dishType2, ..., dishTypeN");
@@ -23,8 +31,8 @@ namespace GrosvenorInHousePracticum
                 var unparsedOrder = Console.ReadLine();
                 if (unparsedOrder.ToLower() == "m")
                 {
-                    Console.WriteLine(dish.SeeMorninMenu());
-                    Console.WriteLine(dish.SeeEveningMenu());
+                    Console.WriteLine(dishManager.SeeMorninMenuMock());
+                    Console.WriteLine(dishManager.SeeMorninMenuMock());
                     Console.WriteLine("-----------------------------------");
                 }
                 else

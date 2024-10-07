@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\GrosvenorDeveloper.WebApp\GrosvenorDeveloper.WebApp.csproj" />
   </ItemGroup>
 
 </Project>

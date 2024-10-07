@@ -1,8 +1,10 @@
 ﻿using Application.Enums;
 using Application.Models;
 using GrosvenorDeveloper.WebApp.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -19,6 +21,29 @@ namespace Application.Services
             _context = context;
         }
 
+        /// <summary>
+        /// This method 
+        /// </summary>
+        /// <param name="unparsedOrder"></param>
+        /// <returns></returns>
+        public async Task<string> TakeOrderFromDb(string unparsedOrder)
+        {
+            try
+            {
+                Order order = ParseOrder(unparsedOrder);
+
+                List<Dish> dishes = await GetDishesForOrder(order);
+
+                string returnValue = FormatOutput(dishes);
+
+                return returnValue;
+            }
+            catch (ApplicationException e)
+            {
+                return e.Message;
+            }
+        }
+
         public string TakeOrder(string unparsedOrder)
         {
             try
@@ -32,6 +57,29 @@ namespace Application.Services
             {
                 return e.Message;
             }
+        }
+
+        private async Task<List<Dish>> GetDishesForOrder(Order order)
+        {
+            var dishList = new List<Dish>();
+
+            foreach (var dishId in order.Dishes)
+            {
+                var menuItem = await _context.MenuItems
+                    .Include(mi => mi.Dish)
+                    .FirstOrDefaultAsync(mi => mi.DishId == dishId && mi.Period == order.Period);
+
+                if (menuItem != null)
+                {
+                    dishList.Add(menuItem.Dish);
+                }
+                else
+                {
+                    throw new ApplicationException($"Dish with ID {dishId} is not available for {order.Period}");
+                }
+            }
+
+            return dishList;
         }
 
         private Order ParseOrder(string unparsedOrder)

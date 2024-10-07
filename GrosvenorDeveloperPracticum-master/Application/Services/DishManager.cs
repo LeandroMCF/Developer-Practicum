@@ -1,9 +1,12 @@
 ﻿using Application.Enums;
+using Application.Inputs;
 using Application.Models;
 using GrosvenorDeveloper.WebApp.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -17,9 +20,84 @@ namespace Application.Services
         }
 
         /// <summary>
+        /// Takes the full list of available items from the menu
+        /// </summary>
+        public async Task<object> GetFullMenu()
+        {
+            var morningMenu = await _context.MenuItems
+                .Where(mi => mi.Period == Period.morning)
+                .Select(mi => new { mi.Dish.Id, mi.Dish.DishName })
+                .ToListAsync();
+
+            var eveningMenu = await _context.MenuItems
+                .Where(mi => mi.Period == Period.evening)
+                .Select(mi => new { mi.Dish.Id, mi.Dish.DishName })
+                .ToListAsync();
+
+            var menu = new
+            {
+                Morning = morningMenu,
+                Evening = eveningMenu
+            };
+
+            return menu;
+        }
+
+        /// <summary>
+        /// Create new item in database
+        /// </summary>
+        /// <param name="newDish"></param>
+        /// <exception cref="ApplicationException"></exception>
+        public async Task AddDishToMenu(AddDish newDish)
+        {
+            try
+            {
+                if (!Enum.TryParse(newDish.time, true, out Period period))
+                {
+                    throw new ApplicationException("Invalid time of day. Please specify 'morning' or 'evening'.");
+                }
+
+                var dish = await _context.Dishes.FirstOrDefaultAsync(d => d.DishName == newDish.dishName);
+
+                if (dish == null)
+                {
+                    dish = new Dish
+                    {
+                        DishName = newDish.dishName,
+                        Count = newDish.count
+                    };
+                    await _context.Dishes.AddAsync(dish);
+                    await _context.SaveChangesAsync();
+                }
+
+                var menuItem = await _context.MenuItems.FirstOrDefaultAsync(mi => mi.DishId == dish.Id && mi.Period == period);
+
+                if (menuItem == null)
+                {
+                    var newMenuItem = new MenuItem
+                    {
+                        DishId = dish.Id,
+                        Period = period
+                    };
+                    await _context.MenuItems.AddAsync(newMenuItem);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new ApplicationException("This dish is already associated with this period.");
+                }
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+        }
+
+        /// <summary>
         /// Returns the avalieble dishs in menu at mornin period
         /// </summary>
-        public string SeeMorninMenu()
+        public string SeeMorninMenuMock()
         {
             try
             {
@@ -34,7 +112,7 @@ namespace Application.Services
         /// <summary>
         /// Returns the avalieble dishs in menu at evening period
         /// </summary>
-        public string SeeEveningMenu()
+        public string SeeEveningMenuMock()
         {
             try
             {

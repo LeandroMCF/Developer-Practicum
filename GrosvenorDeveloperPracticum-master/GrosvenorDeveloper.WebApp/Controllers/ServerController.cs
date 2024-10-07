@@ -15,7 +15,7 @@ namespace GrosvenorDeveloper.WebApp.Controllers
         }
 
         [HttpPost("mock/takeorder")]
-        public ActionResult<string> TakeOrder([FromBody] string unparsedOrder)
+        public ActionResult<string> TakeOrderMock([FromBody] string unparsedOrder)
         {
             try
             {
@@ -25,6 +25,21 @@ namespace GrosvenorDeveloper.WebApp.Controllers
             catch (ApplicationException ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("takeOrder")]
+        public async Task<IActionResult> TakeOrder([FromBody] string request)
+        {
+            try
+            {
+                var result = await _server.TakeOrderFromDb(request);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+
+                throw e;
             }
         }
     }

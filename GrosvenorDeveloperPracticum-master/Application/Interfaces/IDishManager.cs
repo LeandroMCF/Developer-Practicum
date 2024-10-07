@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Application.Inputs;
 using Application.Models;
 
 namespace Application
@@ -12,7 +14,9 @@ namespace Application
         /// <param name="order"></param>
         /// <returns></returns>
         List<Dish> GetDishes(Order order);
-        string SeeMorninMenu();
-        string SeeEveningMenu();
+        string SeeMorninMenuMock();
+        string SeeEveningMenuMock();
+        Task<object> GetFullMenu();
+        Task AddDishToMenu(AddDish dish);
     }
 }

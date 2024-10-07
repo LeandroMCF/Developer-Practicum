@@ -1,4 +1,5 @@
 ﻿using Application;
+using Application.Inputs;
 using Application.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,32 +18,32 @@ namespace GrosvenorDeveloper.WebApp.Controllers
         }
 
         [HttpGet("mock/morningmenu")]
-        public ActionResult<string> GetMorningMenu()
+        public ActionResult<string> GetMorningMenuMock()
         {
-            var menu = _dishManager.SeeMorninMenu();
+            var menu = _dishManager.SeeMorninMenuMock();
             return Ok(menu);
         }
 
         // GET: api/dishmanager/eveningmenu
         [HttpGet("mock/eveningmenu")]
-        public ActionResult<string> GetEveningMenu()
+        public ActionResult<string> GetEveningMenuMock()
         {
-            var menu = _dishManager.SeeEveningMenu();
+            var menu = _dishManager.SeeEveningMenuMock();
             return Ok(menu);
         }
 
-        [HttpPost("mock/order")]
-        public ActionResult<List<Dish>> PlaceOrder([FromBody] Order order)
+        [HttpGet("seeMenu")]
+        public async Task<IActionResult> SeeMenu()
         {
-            try
-            {
-                var dishes = _dishManager.GetDishes(order);
-                return Ok(dishes);
-            }
-            catch (ApplicationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var menu = await _dishManager.GetFullMenu();
+            return Ok(menu);
+        }
+
+        [HttpPost("addDish")]
+        public async Task<IActionResult> AddDish([FromBody] AddDish request)
+        {
+            await _dishManager.AddDishToMenu(request);
+            return Ok("Dish added successfully");
         }
     }
 }
